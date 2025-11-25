@@ -1,0 +1,16 @@
+---
+title: "Inicio"
+---
+
+# Sitio ejemplo — Clase 3
+
+Este es un sitio de ejemplo para el curso **Reproducibilidad y Comunicación de Resultados**.
+
+Aquí vamos a practicar:
+
+- Cómo estructurar un sitio web con Quarto.
+- Cómo publicarlo en **GitHub Pages**.
+- Cómo incluir gráficos estáticos e interactivos en HTML.
+
+En esta página solo dejamos la bienvenida.  
+Los gráficos estarán en la pestaña **"Gráficos"** del menú.

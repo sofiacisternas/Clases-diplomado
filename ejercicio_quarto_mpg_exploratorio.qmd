@@ -1,0 +1,175 @@
+---
+title: "Ejercicio: Exploración de la base mpg"
+author: "Nombre del/la estudiante"
+format:
+  html:
+    toc: true
+    code-fold: true
+lang: es
+editor: visual
+---
+
+## Introducción
+
+En este ejercicio trabajaremos con la base `ggplot2::mpg`, que contiene información sobre distintos tipos de autos y su rendimiento de combustible.\
+El objetivo es construir un pequeño **informe exploratorio** usando código R dentro de Quarto.
+
+A lo largo del documento deberás:
+
+-   inspeccionar la base de datos,
+-   crear resúmenes con `dplyr`,
+-   generar uno o más gráficos con `ggplot2`,
+-   escribir un breve texto interpretativo usando **código inline** (`` `r ...` ``),
+-   usar algunas **opciones de chunk** propias de Quarto.
+
+------------------------------------------------------------------------
+
+## Chunk de configuración
+
+Completa y ejecuta el siguiente chunk de configuración.\
+Debe:
+-   ponle de etiqueta al chunk "setup" y un include: false
+-   cargar los paquetes necesarios (`dplyr`, `ggplot2`, `DT` si quieres usar tablas interactivas),
+-   crear un objeto llamado `datos` a partir de `ggplot2::mpg`,
+-   definir opciones globales de chunk con `knitr::opts_chunk$set()`.
+
+```{r}
+
+
+```
+
+------------------------------------------------------------------------
+
+## 1. Conocer los datos
+
+En esta sección debes **explorar la estructura** de la base `datos`.
+
+1.  Muestra las primeras filas (por ejemplo con `head()`).
+2.  Calcula cuántas observaciones y cuántas variables tiene la base.
+3.  Identifica cuántos **fabricantes distintos** (`manufacturer`) hay.
+4.  Describe brevemente (en un párrafo) qué representa cada una de las variables principales que usarás: `displ`, `cty`, `hwy`, `class`, `drv`.
+
+```{r}
+#| label: explorar_datos
+#| echo: true
+
+# 1. Primeras filas
+
+
+# 2. Número de filas y columnas
+
+
+# 3. Número de fabricantes distintos
+
+
+# Puedes agregar otras funciones de exploración si lo consideras útil.
+```
+
+Escribe aquí un párrafo corto en el que expliques, con tus palabras, qué información contiene la base `mpg` y qué significan `displ`, `cty`, `hwy`, `class` y `drv`.
+
+------------------------------------------------------------------------
+
+## 2. Resumen por tipo de auto (`class`)
+
+Ahora queremos construir un **resumen numérico** por tipo de auto.
+
+1.  Crea un objeto llamado `resumen_class` que:
+    -   agrupe la base por `class`,
+    -   calcule al menos:
+        -   `n` = número de observaciones,
+        -   `cty_prom` = promedio de `cty`,
+        -   `hwy_prom` = promedio de `hwy`,
+        -   `displ_prom` = promedio de `displ`.
+2.  Ordena el resultado de mayor a menor `hwy_prom`.
+3.  Muestra la tabla en el documento. Puedes elegir:
+    -   `knitr::kable()` con un caption, o
+    -   `DT::datatable()` con buscador y filtros.
+
+```{r}
+#| label: resumen_class
+#| tbl-cap: "Resumen de rendimiento por tipo de auto"
+#| echo: true
+
+# Construye aquí el objeto resumen_class con dplyr
+
+
+# Muestra la tabla (elige knitr o DT):
+
+```
+
+------------------------------------------------------------------------
+
+## 3. Crear una medida de rendimiento relativo
+
+Vamos a crear una nueva variable `rend_rel` que mida el **rendimiento relativo** entre carretera y ciudad.
+
+1.  Crea un nuevo data frame llamado `datos_rend` que:
+    -   copie el contenido de `datos`,
+    -   incluya una columna nueva `rend_rel = hwy / cty`.
+2.  Revisa si hay valores extremos poco razonables (muy grandes o muy pequeños) y decide si los filtrarás.
+3.  Calcula un resumen de `rend_rel` por tipo de auto (`class`): promedio, mínimo y máximo.
+
+```{r}
+#| label: rendimiento_relativo
+#| echo: true
+
+# 1. Crear datos_rend con la nueva variable
+
+
+# 2. Explorar valores extremos de rend_rel
+
+
+# 3. Resumen por class
+
+```
+
+------------------------------------------------------------------------
+
+## 4. Gráfico principal del informe
+
+A partir de los datos anteriores, construye un **gráfico principal** que podría ir en un informe para personas no expertas en R.
+
+Requisitos mínimos:
+
+-   Usar `ggplot2` con:
+    -   `displ` en el eje *x*,
+    -   `hwy` en el eje *y*.
+-   Colorear los puntos según `class`.
+-   Ajustar la transparencia (`alpha`) para que el gráfico sea legible.
+-   Personalizar los colores (puedes usar una paleta propia con `scale_color_manual()` o `scale_color_brewer()`).
+-   Agregar:
+    -   título,
+    -   subtítulo,
+    -   etiquetas de ejes,
+    -   etiqueta de la leyenda (`color = "…"`)
+-   Aplicar un tema (`theme_minimal()`, `theme_light()`, etc.).
+
+Guarda el gráfico final en un objeto llamado `grafico_mpg`.
+
+```{r}
+#| label: grafico_mpg
+#| fig-cap: "Relación entre cilindrada y rendimiento en carretera por tipo de auto"
+#| echo: true
+#| warning: false
+#| message: false
+
+# Construye aquí tu gráfico principal con ggplot2
+
+```
+
+------------------------------------------------------------------------
+
+## 5. Mini informe con código inline
+
+Finalmente, escribe un breve texto (5–7 líneas) que responda a las siguientes preguntas:
+
+-   ¿Qué tipo de auto (`class`) tiene, en promedio, el mejor rendimiento en carretera (`hwy_prom`)?
+-   ¿Cuántas millas por galón hay de diferencia entre el mejor y el peor promedio de `hwy`?
+-   ¿Cómo se interpreta la variable `rend_rel` y qué tipo de auto parece tener un mejor rendimiento relativo?
+
+Para responder, usa **código inline** de R.\
+Por ejemplo: `` `r max(resumen_class$hwy_prom)` ``.
+
+Antes de escribir el texto, asegúrate de que el objeto `resumen_class` tenga las columnas necesarias.
+
+Escribe el texto aquí debajo, usando frases continuas (no lista de viñetas), e incorporando al menos **tres** valores calculados con código inline.

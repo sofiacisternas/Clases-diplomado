@@ -1,0 +1,157 @@
+---
+title: "Clase 2 - Informe en Quarto (HTML)"
+author: "Constanza Trujillo y José Ruiz-Tagle"
+date: "`r format(Sys.Date())`"
+lang: es
+execute:
+  echo: true
+  message: false
+  warning: false
+format:
+  html:
+    theme: 
+      light: cosmo
+      dark: slate
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-copy: true
+    code-tools: true
+    smooth-scroll: true
+    title-block-banner: "#f5eefc"
+    include-in-header:
+      text: |
+        <style>
+        :root{
+          --color-primario: #7c4dff;
+          --color-secundario:#ff7aa2;
+          --color-terciario: #00c2a8;
+        }
+        .quarto-title-block .quarto-title-banner { color:#2a2a2a; }
+        h2, h3 { color: var(--color-primario); }
+        .callout-note.callout { border-left-color: var(--color-terciario)!important; }
+        .callout-tip.callout  { border-left-color: var(--color-secundario)!important; }
+        .navbar, a { accent-color: var(--color-primario); }
+        </style>
+---
+
+```{r}
+#| label: setup
+#| include: false
+paquetes <- c("tidyverse", "plotly", "DT", "janitor", "ggplot2")
+inst <- paquetes[!paquetes %in% rownames(installed.packages())]
+if(length(inst)) install.packages(inst, repos = "https://cloud.r-project.org")
+
+library(tidyverse)
+library(plotly)
+library(DT)
+library(janitor)
+library(ggplot2)   # dataset mpg
+```
+
+## ¿Qué haremos?
+
+-   Usar el dataset **`ggplot2::mpg`** (autos).
+-   Construir **2 gráficos interactivos** con `ggplot2` + `plotly`.
+-   Crear **1 tabla interactiva** con `DT`.
+-   Escribir **texto explicativo** breve usando Markdown y R inline.
+
+::: callout-note
+**Tip rápido**\
+Presiona **Render** en RStudio, o corre en la terminal: `quarto render informe_quarto_interactivo_mpg.qmd`.
+:::
+
+### Introducción (breve)
+
+Este informe sirve como **primer acercamiento práctico a Quarto**: partimos desde un documento `.qmd` sencillo y lo llevamos a un **HTML interactivo**. Verás cómo combinar **texto + código + resultados** para contar una historia de datos, aplicar **buenas prácticas de reproducibilidad** (YAML, estructura y control de ejecución) y añadir **interactividad** con `plotly` y `DT`. Al final, deberías ser capaz de **adaptar este esqueleto** a tus propios proyectos.
+
+### ¿Qué es Quarto?
+
+-   Sistema de publicación **open source** para:
+    -   documentos,
+    -   informes,
+    -   presentaciones,
+    -   sitios web.
+-   Permite combinar:
+    -   texto en **Markdown**,
+    -   **código** (R, Python, Julia, etc.),
+    -   tablas y gráficos.
+-   Genera múltiples formatos: HTML, PDF, Word, **presentaciones revealjs**, etc.
+
+### Setup en chunks
+
+En Quarto, las opciones de los chunks de código se pueden definir de dos maneras: mediante la sintaxis moderna de comentarios con #\| (que es la que utilizamos en este informe) o mediante la sintaxis clásica de knitr, que se declara dentro de las llaves del chunk (por ejemplo, {r setup, echo=FALSE, include=FALSE}). Ambas formas son equivalentes en cuanto al efecto que tienen sobre la ejecución y la presentación del código; sin embargo, para mantener la claridad y evitar posibles conflictos, es recomendable elegir un estilo y usarlo de manera consistente a lo largo del documento. En este archivo se ha optado por la sintaxis propia de Quarto con líneas como #\| label:, #\| echo: y #\| include:, ya que hace más explícitas las opciones de cada chunk y facilita su lectura.
+
+### Sobre el dataset `mpg` (autos)
+
+El dataset `mpg` viene en **ggplot2** y reúne observaciones de modelos de autos en EE.UU. Incluye variables como: fabricante (`manufacturer`), modelo (`model`), clase (`class`), año (`year`), rendimiento en ciudad (`cty`) y en carretera (`hwy`), cilindrada (`displ`, litros) y tipo de transmisión (`trans`). Es ideal para enseñar **visualización**, **facetas** y **mapeos estéticos** sin depender de datos externos.
+
+Variables destacadas que usaremos: - `hwy`: rendimiento (millas por galón) en **carretera**. - `cty`: rendimiento en **ciudad**. - `displ`: **cilindrada** del motor (litros). - `class`: **segmento** del vehículo (compact, suv, minivan, etc.). - `manufacturer`: **fabricante** (Toyota, Ford, etc.).
+
+### 1. Conocer los datos
+
+```{r}
+#| label: glimpse
+#| tbl-cap: "Primeras filas de mpg"
+head(mpg, 8)
+```
+
+```{r}
+#| label: datos-limpios
+datos <- mpg |> janitor::clean_names()
+summary(dplyr::select(datos, where(is.numeric)))
+```
+
+### 2. Gráfico interactivo 1: Dispersión
+
+**Objetivo**: explorar la relación entre **cilindrada** (`displ`) y **rendimiento en carretera** (`hwy`) por **clase** de vehículo.
+
+```{r}
+#| label: scatter
+#| fig-cap: "Cilindrada vs rendimiento en carretera por clase"
+#| fig-width: 8
+#| fig-height: 5
+p1 <- ggplot(datos, aes(x = displ, y = hwy, color = class,
+                        text = paste("Modelo:", model, "<br>Fabricante:", manufacturer)))+
+  geom_point(alpha = 0.85, size = 2.5) +
+  scale_color_brewer(palette = "Set2") +
+  labs(x = "Cilindrada (L)", y = "Rendimiento carretera (mpg)", color = "Clase") +
+  theme_minimal(base_size = 13) +
+  facet_wrap(~ class, ncol = 4)
+
+plotly::ggplotly(p1, tooltip = c("x","y","color","text"))
+```
+
+**Sugerencia:** añade `facet_wrap(~ class, ncol = 4)` para comparar segmentos.
+
+### 3. Gráfico interactivo 2: Distribución
+
+**Objetivo**: comparar la **distribución de rendimiento** en carretera (`hwy`) por **clase**.
+
+```{r}
+#| label: density
+#| fig-cap: "Distribución de rendimiento en carretera por clase"
+#| fig-width: 8
+#| fig-height: 4.5
+p2 <- ggplot(datos, aes(x = hwy, fill = class)) +
+  geom_density(alpha = 0.45) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(x = "Rendimiento carretera (mpg)", y = "Densidad", fill = "Clase") +
+  theme_minimal(base_size = 13)
+
+plotly::ggplotly(p2)
+```
+
+### 4. Tabla interactiva con filtros
+
+```{r}
+#| label: tabla
+#| tbl-cap: "Tabla interactiva de autos"
+DT::datatable(
+  datos,
+  filter = "top",
+  options = list(pageLength = 10, scrollX = TRUE),
+  rownames = FALSE
+)
+```

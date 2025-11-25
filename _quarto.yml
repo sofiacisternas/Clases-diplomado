@@ -1,0 +1,18 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Sitio ejemplo Clase 3"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Inicio
+      - href: graficos.qmd
+        text: Gráficos
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2

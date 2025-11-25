@@ -1,0 +1,333 @@
+---
+title: "Clase: Presentaciones con Quarto y revealjs"
+author: "Constanza Trujillo"
+date: "`r format(Sys.Date())`"
+format:
+  revealjs:
+    theme: moon
+    slide-number: true
+    transition: fade
+    incremental: true
+lang: es
+editor: visual
+---
+
+# Bienvenidas/os
+
+Reproducibilidad y Comunicación de Resultados
+
+Diplomado en Data Science para Ciencias Sociales\
+Universidad Diego Portales
+
+**Tema de hoy:** Cómo crear presentaciones en HTML usando **Quarto** y **revealjs**.
+
+------------------------------------------------------------------------
+
+## Objetivos de la clase
+
+Al final de esta sesión, podrás:
+
+-   Comprender qué es **Quarto** y qué es **revealjs**.
+-   Reconocer la estructura básica de un archivo `.qmd` de presentación.
+-   Crear diapositivas con texto, listas, código y gráficos.
+-   Usar opciones útiles de presentación (tema, transición, bullets incrementales, columnas).
+-   Renderizar una presentación y compartirla.
+
+------------------------------------------------------------------------
+
+## ¿Qué es revealjs?
+
+-   Librería de **JavaScript** para crear presentaciones en el navegador.
+-   Permite:
+    -   transiciones entre diapositivas,
+    -   temas visuales,
+    -   atajos de teclado (flechas para avanzar/retroceder),
+    -   incrustar video, iframes, etc.
+
+------------------------------------------------------------------------
+
+## En Quarto, se activa en el YAML con:
+
+`format:`, `revealjs:`, `theme: "beige"`
+
+> No necesitamos escribir JavaScript: Quarto se encarga de generar todo el HTML y la integración con revealjs.
+
+------------------------------------------------------------------------
+
+## Estructura básica de una presentación
+
+Un archivo `.qmd` de presentación tiene dos partes:
+
+1.  **Encabezado YAML** (entre `---` y `---`).
+2.  **Cuerpo en Markdown** (diapositivas).
+
+------------------------------------------------------------------------
+
+## Ejemplo mínimo de YAML (esquema):
+
+-   `title: "Mi primera presentación con Quarto"`
+
+-   `author: "Nombre Apellido"`
+
+-   `format:`
+
+    -   `revealjs:`
+        -   `theme: "beige"`
+
+-   La portada suele ser el primer encabezado de nivel 1: `# Portada`.
+
+-   Cada nueva diapositiva se define con un encabezado de nivel 2: `##`.
+
+------------------------------------------------------------------------
+
+## Encabezado YAML de esta clase
+
+Esta misma presentación tiene un encabezado con:
+
+-   `title: "Clase: Presentaciones con Quarto y revealjs"`
+-   `author: "Constanza Trujillo"`
+-   `format:`
+    -   `revealjs:`
+        -   `theme: "moon"`
+        -   `slide-number: true`
+        -   `transition: "fade"`
+        -   `incremental: true`
+
+------------------------------------------------------------------------
+
+## Opciones importantes:
+
+-   `theme`: estilo visual (`beige`, `simple`, `night`, `moon`, etc.).
+-   `slide-number: true`: muestra el número de diapositivas.
+-   `transition`: tipo de transición (`fade`, `slide`, `zoom`, etc.).
+-   `incremental: true`: las listas aparecen de a un ítem.
+
+------------------------------------------------------------------------
+
+## Diapositivas con texto y listas
+
+Ejemplo de diapositiva sencilla (esquema):
+
+-   Título: `## Motivación`
+-   Contenido:
+    -   `-` Combinar código y narrativa en una misma presentación.
+    -   `-` Evitar copiar y pegar gráficos desde R a PowerPoint.
+    -   `-` Mantener la presentación **reproducible**:
+        -   si cambian los datos, se vuelve a renderizar.
+
+------------------------------------------------------------------------
+
+## Recomendación:
+
+-   usar **oraciones cortas**,
+-   evitar párrafos muy largos,
+-   usar bullets para ideas clave.
+
+------------------------------------------------------------------------
+
+## Bullets incrementales
+
+Con `incremental: true` en el YAML, las listas aparecen de a poco en revealjs.
+
+Ejemplo conceptual:
+
+-   `## Pasos del análisis`
+    -   `-` Cargar datos
+    -   `-` Explorar estructura
+    -   `-` Limpiar variables
+    -   `-` Visualizar resultados
+    -   `-` Comunicar hallazgos
+
+------------------------------------------------------------------------
+
+## Chunk de configuración en la presentación
+
+En una presentación donde usarás R, es buena idea tener un chunk de setup:
+
+```{r}
+#| label: setup
+#| include: false
+
+library(ggplot2)
+
+knitr::opts_chunk$set(
+  echo    = TRUE, warning = FALSE, message = FALSE)
+```
+
+-   `include: false`: el código se ejecuta pero no se muestra en las diapositivas.
+-   `opts_chunk$set`: define opciones por defecto para todos los chunks.
+
+------------------------------------------------------------------------
+
+## Insertar código R en una diapositiva
+
+Ejemplo de chunk con R:
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+
+x <- rnorm(1000)
+mean(x)
+```
+
+## Insertar código R en una diapositiva
+
+-   `echo: true`: muestra el código.
+-   `message: false`, `warning: false`: oculta mensajes y advertencias.
+-   El resultado (la media) se muestra debajo del código en la diapositiva.
+
+------------------------------------------------------------------------
+
+## Insertar gráficos con ggplot2
+
+Ejemplo de gráfico dentro de una diapositiva:
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-cap: "Relación entre cilindrada y rendimiento (mpg)"
+
+ggplot(mpg, aes(displ, hwy, color = class)) +
+  geom_point()
+```
+
+-   El gráfico se renderiza dentro de la diapositiva.
+-   `fig-cap` define el título de la figura.
+
+------------------------------------------------------------------------
+
+## Controlar tamaño y alineación del gráfico
+
+Opciones útiles de chunk:
+
+```{r}
+#| echo: true
+#| fig-width: 7
+#| fig-height: 5
+#| fig-align: "center"
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point()
+```
+
+-   `fig-width`, `fig-height`: tamaño en pulgadas.
+-   `fig-align`: `"left"`, `"center"`, `"right"`.
+
+------------------------------------------------------------------------
+
+## Diapositivas con columnas
+
+Para distribuir contenido en **dos columnas**:
+
+::::: columns
+::: column
+### Conceptos
+
+-   Base `mpg`
+-   `displ`: cilindrada
+-   `hwy`: rendimiento en carretera
+:::
+
+::: column
+```{r}
+#| echo: true
+
+ggplot(mpg, aes(displ, hwy)) +
+  geom_point(alpha = 0.7)
+```
+:::
+:::::
+
+Esto ayuda a aprovechar mejor el espacio en pantalla.
+
+------------------------------------------------------------------------
+
+## Insertar imágenes
+
+Puedes incluir imágenes externas si las guardas en una carpeta, por ejemplo `img/`:
+
+-   Título de la diapositiva: `## Diapositiva con imagen`
+-   Cuerpo: `![Diagrama de flujo del análisis](img/diagrama.png)`
+
+Recomendaciones:
+
+-   usar nombres descriptivos para los archivos,
+-   cuidar la resolución (que no se vea pixelado en pantalla grande).
+
+------------------------------------------------------------------------
+
+## Insertar imágenes
+
+![Gatito](img/gatito.jpg)
+
+------------------------------------------------------------------------
+
+## Notas del presentador/a
+
+Quarto permite agregar notas que solo ve la persona que presenta:
+
+-   Contenido visible: puntos clave que verá el público.
+-   Debajo, un bloque `::: notes` con recordatorios, ejemplos o anécdotas.
+
+En el modo de presentación, revealjs tiene un **view de presentador** donde se ven estas notas.
+
+------------------------------------------------------------------------
+
+## ¿Cómo renderizar la presentación?
+
+En RStudio:
+
+1.  Abrir el archivo `.qmd`.
+2.  Verificar que el encabezado YAML tiene `format: revealjs`.
+3.  Hacer clic en el botón **Render**.
+
+## ¿Cómo renderizar la presentación?
+
+En la consola del sistema (si tienes Quarto instalado también por fuera de RStudio):
+
+`quarto render mi_presentacion.qmd`
+
+Se genera un archivo `.html` que puedes:
+
+-   abrir en el navegador,
+-   subir a Canvas o Moodle,
+-   publicar en GitHub Pages o en un servidor web.
+
+------------------------------------------------------------------------
+
+## Ejercicio guiado
+
+1.  Crear un nuevo archivo `.qmd` con formato `revealjs`.
+2.  Definir un YAML parecido al de esta clase, pero con tu nombre como autor/a.
+3.  Incluir al menos:
+    -   una diapositiva de portada,
+    -   una diapositiva con texto y lista,
+    -   una diapositiva con un gráfico de `ggplot2`,
+    -   una diapositiva con dos columnas.
+4.  Renderizar la presentación y revisar el resultado en el navegador.
+
+------------------------------------------------------------------------
+
+## Ideas para seguir practicando
+
+-   Cambiar el **theme** y la **transition** y comparar resultados.
+-   Agregar una diapositiva con notas de presentador/a.
+-   Crear una sección final con **preguntas y conclusiones**.
+-   Transformar un informe existente en `.qmd` a una presentación `revealjs`.
+
+------------------------------------------------------------------------
+
+## Cierre
+
+Hoy vimos:
+
+-   qué son Quarto y revealjs,
+-   cómo se estructura un archivo `.qmd` de presentación,
+-   cómo crear diapositivas con texto, código, gráficos y columnas,
+-   opciones prácticas para mejorar la presentación.
+
+La idea es que puedan usar Quarto no solo para informes reproducibles,\
+sino también para **presentar resultados** directamente desde su código.
