@@ -177,7 +177,7 @@ El siguiente código muestra cómo podría definirse una animación.
 #| eval: false
 #| message: false
 #| warning: false
-
+install.packages("gifski")
 library(gganimate)
 
 datos_anim <- datos_econ
@@ -203,13 +203,13 @@ anim <- p_anim +
 
 # Para generar un GIF (ejecutar en la consola de R dentro del proyecto):
 #install.packages("gifski")
-#library(gifski)
-#anim_save(
-#   filename  = "img/animacion_ejemplo.gif",
-#   animation = anim,
-#   width     = 800,
-#   height    = 450
-# )
+library(gifski)
+anim_save(
+   filename  = "img/animacion_ejemplo.gif",
+   animation = anim,
+   width     = 800,
+   height    = 450
+ )
 ```
 
 ---
